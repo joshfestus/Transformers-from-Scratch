@@ -1,0 +1,65 @@
+"""Chapter 22. Dropout, and the factor that makes it consistent.
+
+At training time some activations are set to nought at random. At
+inference time none are. Those two have to agree on average, and the
+scaling factor is what makes them agree.
+"""
+import numpy as np
+
+rng = np.random.default_rng(0)
+
+np.set_printoptions(precision=3, suppress=True, floatmode="fixed")
+
+
+def dropout(x, rate, training=True):
+    """Inverted dropout, which is what every library implements."""
+    if not training or rate == 0.0:
+        return x
+    keep = rng.random(x.shape) >= rate
+    return x * keep / (1.0 - rate)
+
+
+def naive_dropout(x, rate, training=True):
+    """The version without the scaling, for comparison."""
+    if not training:
+        return x
+    return x * (rng.random(x.shape) >= rate)
+
+
+def main():
+    x = np.ones((4, 6))
+    print("SIX ACTIVATIONS, ALL ONE, WITH A DROPOUT RATE OF A THIRD")
+    print(dropout(x, 1 / 3)[:2])
+    print("  the survivors are 1.5, not 1.0, because each was divided")
+    print("  by the share that survives")
+
+    print("\nTHE AVERAGE IS PRESERVED, WHICH IS THE WHOLE POINT")
+    big = np.ones((20000, 8))
+    for rate in [0.0, 0.1, 0.3, 0.5, 0.9]:
+        scaled = dropout(big, rate).mean()
+        plain = naive_dropout(big, rate).mean()
+        print(f"  rate {rate:<5} with scaling {scaled:.4f}   "
+              f"without {plain:.4f}")
+    print("  without the scaling, switching off dropout at inference")
+    print("  would change every activation's size")
+
+    print("\nTRAINING AND INFERENCE, SAME INPUT")
+    small = np.arange(1.0, 7.0).reshape(1, 6)
+    print("  input     ", small[0])
+    print("  training  ", dropout(small, 0.5)[0])
+    print("  training  ", dropout(small, 0.5)[0])
+    print("  inference ", dropout(small, 0.5, training=False)[0])
+    print("  the same call gives a different answer every time during")
+    print("  training and the same answer every time at inference")
+
+    print("\nHOW MUCH VARIANCE DROPOUT ADDS")
+    print("  rate    spread of the batch mean")
+    for rate in [0.0, 0.1, 0.3, 0.5]:
+        ones = np.ones((32, 64))
+        means = [dropout(ones, rate).mean() for _ in range(400)]
+        print(f"  {rate:<7} {np.std(means):.5f}")
+    print("  a higher rate regularises harder and adds more noise")
+
+
+if __name__ == "__main__":
+    main()
