@@ -56,7 +56,7 @@ def main():
     print("  ein Skalarprodukt ist am größten, wenn beide gleich zeigen,")
     print("  null im rechten Winkel, negativ in Gegenrichtung")
 
-    print("\nMATRIXMULTIPLIKATION SIND VIELE SKALARPRODUKTE")
+    print("\nMATRIXMULTIPLIKATION BESTEHT AUS VIELEN SKALARPRODUKTEN")
     a = np.array([[1.0, 2.0],
                   [3.0, 4.0],
                   [5.0, 6.0]])
