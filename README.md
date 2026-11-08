@@ -7,6 +7,11 @@ Every listing in the book comes from these files. The book executes them when
 it is typeset, so what is printed on the page is what these files actually
 print. The notebooks are generated from the same files.
 
+German readers: the notebooks for the German edition, *Transformer von
+Grund auf*, are in [`notebooks/de`](notebooks/de), with the German code
+they use. Deutsche Leser finden die Notebooks zur deutschen Ausgabe im
+Ordner [`notebooks/de`](notebooks/de).
+
 ## Running it
 
 Each chapter has a notebook that opens in Colab and needs nothing installed.
